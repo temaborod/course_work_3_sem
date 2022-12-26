@@ -1,6 +1,7 @@
 #include <iostream>
 #include <list>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -11,6 +12,8 @@ class HashTable {
 public:
     HashTable(int V);
     void InsertItem(int key, string data);
+    void FindByCarNumber(int key, string CarNumber);
+    void DeleteItem(int key, string CarNumber);
     void deleteItem(int key);
 
     // какая то хуйня закомменчена..
@@ -50,7 +53,74 @@ public:
     }
 
     void DisplayHashes();
+    
 };
+
+// Удаление элемента
+void HashTable::DeleteItem(int key, string CarNumber) {
+    int index = hashFunction(key);
+    int IndexOfElement = 0;
+    if (table[index].size() == 1) {
+        table[index].pop_back();
+    }
+    /*else {
+        
+        for (auto x : table[index]) {
+            char* str = const_cast<char*>(x.c_str());
+            char* substr = const_cast<char*>(CarNumber.c_str());
+            int count = 0;
+            for (int i = 0; i < 9; i++) {
+                if (str[i] != substr[i])
+                    break;
+                else {
+                    count++;
+                }
+            }
+            if (count == 9) {
+                list<int>::iterator it = table[index].begin();
+                advance(it, IndexOfElement); // <-- advance итерирует переданный итератор на k позиций
+                if (it != table[index].end())
+                {
+                    return table[index].erase(it); // <--- Вернет итератор на k+1 элемент, перед it нет *
+                }
+         
+                break;
+            }
+            IndexOfElement++;
+        }
+    }*/
+    
+}
+
+// Поиск элемента по номеру авто
+void HashTable::FindByCarNumber(int key, string CarNumber) {
+    int index = hashFunction(key);  
+    if (table[index].size() == 1){
+        for (auto x : table[index])
+            cout << "[" << x << "]";
+    }
+    else {
+        for (auto x : table[index]) {
+            char* str = const_cast<char*>(x.c_str());
+            char* substr = const_cast<char*>(CarNumber.c_str());
+            int count = 0;
+            for (int i = 0; i < 9; i++) {
+                if (str[i] != substr[i])
+                    break;
+                else {
+                    count++;
+                }
+            }
+            if (count == 9) {
+                cout << "[" << x << "]" ;
+                break;
+            }
+        }
+    }
+}
+
+// Поиск по фамилии
+void HashTable::FindByLastName(string LastName)
 
 // Функция создания хэш таблицы
 HashTable::HashTable(int c) {
@@ -159,7 +229,7 @@ int Menu()
     cout << "2. Удалить элемент из таблицы" << endl;
     cout << "3. Показать таблицу" << endl;  // +
     cout << "4. Очистить таблицу" << endl;
-    cout << "5. Поиск по номеру авто" << endl;
+    cout << "5. Поиск по номеру авто" << endl;  // +
     cout << "6. Поиск по фамилии" << endl;
     cout << "7. Выход" << endl;
 
@@ -228,7 +298,7 @@ int main()
             cout << "::: ";
             cin >> CarNumber;
             key = DigitsFromCarNumber(CarNumber);
-            h.deleteItem(key);
+            h.DeleteItem(key, CarNumber);
             break;
 
         case 3:
@@ -243,7 +313,20 @@ int main()
 
         case 5:
             system("cls");
-
+            while (true) {
+                cout << "\nВведите номер авто (строка формата «ANNNAANNN», где N-цифра,\n\
+                    A – буква (латиница, прописные) из множества: А, В, Е, К, М, Н, О, Р, С, Т, Y, Х): " << endl;
+                cout << "::: ";
+                cin >> CarNumber;
+                if (RightCarNumber(CarNumber)) {
+                    break;
+                }
+                else {
+                    cout << "Ошибка при вводе!" << endl;
+                }
+            }
+            key = DigitsFromCarNumber(CarNumber);
+            h.FindByCarNumber(key, CarNumber);
             break;
 
         case 6:
